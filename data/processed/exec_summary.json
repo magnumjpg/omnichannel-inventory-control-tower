@@ -1,0 +1,31 @@
+{
+  "snapshot_date": "2026-10-25",
+  "sku_count": 160,
+  "fba_available_units": 19980,
+  "three_pl_units": 35827,
+  "open_po_units": 50500,
+  "stockout_skus_hdos_lt_14": 53,
+  "fee_band_skus_hdos_14_28": 8,
+  "aged_cliff_skus": 2,
+  "transfer_cartons": 147,
+  "transfer_units": 11450,
+  "factory_units": 38750,
+  "factory_cartons": 461,
+  "factory_cbm": 26.91,
+  "container": {
+    "container_type": "FCL_20GP",
+    "capacity_cbm": 28.8,
+    "base_cbm": 26.91,
+    "topup_cbm": 1.86,
+    "total_cbm": 28.77,
+    "utilization": 0.999,
+    "dead_zone": false,
+    "total_cartons": 492,
+    "total_units": 41850,
+    "notes": "Greedy integer knapsack on Tier-A marginal profit velocity; every added carton satisfies the 135-day system DOS cap."
+  },
+  "aggregate_moq_met": true,
+  "projected_monthly_ais_usd": 38.63,
+  "fee_exposure_usd": 3442.0,
+  "removal_recommendations": 2
+}
