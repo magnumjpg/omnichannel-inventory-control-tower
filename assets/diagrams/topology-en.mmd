@@ -1,0 +1,36 @@
+flowchart LR
+    subgraph UP["Level 2 - upstream push"]
+        direction TB
+        F["Factory<br/>Shenzhen / Ningbo<br/>MOQ 300-500 u"]
+        O["Ocean FCL 20' GP<br/>28.8 CBM<br/>L2 75 d +/- 10 d"]
+        F -->|"carton-exact PO"| O
+    end
+    subgraph MID["Decoupling point"]
+        direction TB
+        T["Domestic 3PL<br/>35,827 u on hand"]
+    end
+    S["Shopify DTC<br/>pick / pack / post"]
+    subgraph DOWN["Level 1 - downstream pull"]
+        direction TB
+        A["Amazon FBA<br/>19,980 u available<br/>L1 14 d +/- 3 d"]
+        LF["Low-Inventory fee<br/>HDoS < 28 d"]
+        AF["Aged surcharge<br/>cliff at day 271"]
+        A -.->|"exposure"| LF
+        A -.->|"exposure"| AF
+    end
+    O -->|"container manifest<br/>+ 3PL ETA"| T
+    T -->|"weekly transfer<br/>11,450 u / 147 cartons"| A
+    T -->|"DTC allocation"| S
+    S -->|"parcel"| DC["DTC customer"]
+    A -->|"parcel"| AC["Amazon customer"]
+
+    classDef upstream fill:#1A365D,stroke:#1A365D,color:#FFFFFF
+    classDef decouple fill:#4A5568,stroke:#4A5568,color:#FFFFFF
+    classDef pull fill:#EBF0F6,stroke:#1A365D,color:#1A365D
+    classDef fee fill:#FFFFFF,stroke:#C53030,color:#742A2A
+    classDef customer fill:#FFFFFF,stroke:#A0AEC0,color:#2D3748
+    class F,O upstream
+    class T decouple
+    class A,S pull
+    class LF,AF fee
+    class AC,DC customer

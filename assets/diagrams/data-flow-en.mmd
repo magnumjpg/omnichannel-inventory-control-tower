@@ -1,0 +1,39 @@
+flowchart TD
+    subgraph RAW["data/raw - six reproducible feeds"]
+        direction LR
+        C1["catalog_master.csv"]
+        C2["amazon_fba_inventory.csv"]
+        C3["shopify_sales_report.csv"]
+        C4["warehouse_3pl_stock.csv"]
+        C5["daily_sales_history.csv"]
+        C6["open_purchase_orders.csv"]
+    end
+    G["Ingestion gates<br/>keys, signs, carton exactness, tau in [0,1]"]
+    U["Unconstraining<br/>active days -> widening fallback"]
+    M["Two-echelon buffers<br/>SS1 / SS2, shield, ROP / Smax"]
+    K["MOQ reconciliation<br/>5,000 u aggregate floor"]
+    N["20' GP greedy knapsack<br/>Tier-A velocity, 135-day cap"]
+    A["Fee audit<br/>low-inventory, aged, payback"]
+    X["Excel 365 workbook<br/>outputs/"]
+    B["Executive briefing<br/>outputs/"]
+
+    RAW --> G --> U --> M
+    M --> K --> N
+    M --> A
+    N --> X
+    A --> X
+    N --> B
+    A --> B
+
+    classDef raw fill:#F7FAFC,stroke:#A0AEC0,color:#2D3748
+    classDef gate fill:#1A365D,stroke:#1A365D,color:#FFFFFF
+    classDef engine fill:#EBF0F6,stroke:#1A365D,color:#1A365D
+    classDef pack fill:#4A5568,stroke:#4A5568,color:#FFFFFF
+    classDef fee fill:#FFFFFF,stroke:#C53030,color:#742A2A
+    classDef output fill:#E6FFFA,stroke:#2C7A7B,color:#234E52
+    class C1,C2,C3,C4,C5,C6 raw
+    class G gate
+    class U,M,K engine
+    class N pack
+    class A fee
+    class X,B output
