@@ -1,7 +1,7 @@
 # Design decisions
 
 The README is the operating document: it specifies the mathematics and the
-constraints. This file records the choices behind them — what was rejected and
+constraints. This file records the choices behind them - what was rejected and
 what each choice costs. Every claim here is tied to a file or a policy constant
 so it can be checked rather than believed.
 
@@ -25,8 +25,8 @@ so it can be checked rather than believed.
 
 **Decision.** `src/engine/` produces unconstrained demand, safety stock, ROP and
 S_max, the transfer, the factory PO and the container plan. Those values are
-written to the workbook as data. The workbook keeps the *arithmetic* live —
-units, CBM, fee exposure, MOQ/DOS checks and every KPI aggregate — but it does
+written to the workbook as data. The workbook keeps the *arithmetic* live  - 
+units, CBM, fee exposure, MOQ/DOS checks and every KPI aggregate - but it does
 not invent a policy of its own.
 
 **Why.** Two implementations of the same rule drift. The tests can pin the
@@ -95,8 +95,8 @@ reason and is itself a policy choice.
 
 ## 4. The fee shield is a constraint, not a cost trade-off
 
-**Decision.** Keep FBA above 32 days of supply (`FBA_SHIELD_DAYS`) — the 28-day
-low-inventory threshold plus a 4-day cushion — and cap post-transfer FBA cover
+**Decision.** Keep FBA above 32 days of supply (`FBA_SHIELD_DAYS`) - the 28-day
+low-inventory threshold plus a 4-day cushion - and cap post-transfer FBA cover
 at 120 days (`FBA_AGE_CAP_DAYS`).
 
 **Why.** The low-inventory fee is assessed per FNSKU when *both* the 30-day and
@@ -194,9 +194,7 @@ No learned model, no trained weights.
 
 **Why.** The artefact an operator signs is a workbook with live formulas. A
 learned model would move the number out of the auditable arithmetic and into a
-pickle. The portfolio already has a separate project that evaluates learned
-forecasts properly (`retail-demand-forecasting`), so duplicating it here would
-weaken both stories: this one is process automation, not model selection.
+pickle. This architecture focuses on deterministic operational replenishment, container constraints, and policy fee shields. Learned demand forecasting is addressed in a dedicated specialized model (`retail-demand-forecasting`); maintaining auditable deterministic rules here ensures complete formula traceability in the financial workbook.
 
 **Rejected.** Adding a gradient-boosted demand model to the engine to look more
 "ML". It would have no honest evaluation path inside a synthetic, weekly,
@@ -258,10 +256,7 @@ carry.
 `seed=42`, 365 days, 160 child SKUs, and label the project synthetic in the
 README, the profile and the workbook.
 
-**Why.** The decision logic and the workbook are the portfolio artefact. Real
-transaction data would either be confidential or invented; a declared synthetic
-contract is honest and reproducible, and it lets the stress cases be exact
-(3 critical, 4 penalty, 2 aged scenarios) rather than hoped for.
+**Why.** The primary deliverable is the multi-echelon replenishment arithmetic, container knapsack optimization, and auditable financial sign-off workbook. Using a deterministic synthetic contract ensures full reproducibility without compromising proprietary client transaction data, allowing exact stress-test scenarios (3 critical, 4 penalty, 2 aged) to be audited deterministically.
 
 **Rejected.** Scraping a public marketplace dataset and pretending it is a real
 brand. It would add noise without adding decision realism, and it would

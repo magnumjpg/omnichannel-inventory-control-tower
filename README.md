@@ -4,11 +4,11 @@
 
 **Language:** [Español](README_ES.md) · [Decision record](DECISIONS.md) · [Diagram sources](assets/diagrams/README.md)
 
-**A weekly S&OP engine that decides what true demand is, where stock belongs and what the factory ships — with every constraint auditable.**
+**A weekly S&OP engine that decides what true demand is, where stock belongs and what the factory ships - with every constraint auditable.**
 
 *Synthetic 160-SKU catalogue · snapshot 2026-10-25 · seed 42 · USD · one 20' GP weekly ocean cycle · 65 tests*
 
-> **Project status.** Self-directed portfolio project, not a production deployment. Every transaction, inventory balance and purchase order is synthetic and regenerated deterministically from `seed=42`; the decision engine, the six-tab workbook and the 65-test suite are real and run end to end. There is no live Shopify, Amazon or ERP connection.
+> **Executive Overview**: End-to-end Sales & Operations Planning (S&OP) engine and multi-echelon inventory replenishment architecture. Models censored demand velocity under stockouts, dynamically optimizes 3PL-to-FBA inventory transfers against Amazon fee tiers, and computes container-optimized purchase orders.
 
 ---
 
@@ -29,7 +29,7 @@ This repository implements a weekly S&OP decision engine that answers four opera
 
 The output is a **six-tab Excel 365 sign-off workbook driven by the engine, with live arithmetic**, a Markdown executive briefing, processed CSV/JSON artifacts, and a **65-test pytest suite** that locks the mathematics and the workbook structure.
 
-The synthetic catalogue models a fictional travel-organization brand, **Northbound Supply Co.** — packing cubes, compression bags, toiletry kits, tech organizers, shoe bags and laundry bags — so every figure below is reproducible without relying on any real company's product data.
+The synthetic catalogue models a fictional travel-organization brand, **Northbound Supply Co.** - packing cubes, compression bags, toiletry kits, tech organizers, shoe bags and laundry bags - so every figure below is reproducible without relying on any real company's product data.
 
 ## 1. Executive baseline
 
@@ -220,7 +220,7 @@ The generator produces a coherent relational star schema. Every feed is determin
 - **History:** 365 days; snapshot **2026-10-25**.
 - **Catalogue:** 160 child SKUs across 6 parent families: P01 Aero Packing Cubes (36), P02 Vault Compression Bags (36), P03 Transit Toiletry Kits (36), P04 Grid Tech Organizers (24), P05 Cabin Shoe Bags (16), P06 Mesh Laundry Bags (12).
 - **4-D variant matrix:** P01–P03 sizes S/M/L at **12% / 52% / 36%**; P04 Compact/Large at 60/40; P05 Standard/Large at 65/35; P06 S/M/L at 25/45/30. Six colorways at **38% / 24% / 14% / 11% / 8% / 5%** for P01–P04 and four for P05–P06. Hardware: standard zip 68% / water-resistant zip 32% (P01–P04), drawstring 68% / zip 32% (P05), drawstring 100% (P06).
-- **Realized-mix note:** ABC-XYZ tiers are assigned by family-weighted stationary share rank, not by re-normalising the design weights. The realized mix therefore deviates from the design matrix — in the three hero packing families, size S is **6.3%** of volume versus 12% designed, Black is **46.5%** versus 38%, and Terracotta is **1.4%** versus 5% — while the Pareto invariant (top 30 SKUs = **73.5%**) holds exactly. This is a deliberate modelling trade-off: tier-first allocation is what creates the Pareto skew the engine is meant to manage, so the catalogue is not re-stratified and no KPI is regenerated for cosmetic mix alignment.
+- **Realized-mix note:** ABC-XYZ tiers are assigned by family-weighted stationary share rank, not by re-normalising the design weights. The realized mix therefore deviates from the design matrix - in the three hero packing families, size S is **6.3%** of volume versus 12% designed, Black is **46.5%** versus 38%, and Terracotta is **1.4%** versus 5% - while the Pareto invariant (top 30 SKUs = **73.5%**) holds exactly. This is a deliberate modelling trade-off: tier-first allocation is what creates the Pareto skew the engine is meant to manage, so the catalogue is not re-stratified and no KPI is regenerated for cosmetic mix alignment.
 - **Pareto:** the top 18.8% of SKUs (30) generate **73.5%** of unit volume; AX/AY CV is held in the 0.22–0.45 envelope with 14–48 units/day.
 - **Tiers:** AX 18 · AY 12 · BX 30 · BY 20 · CZ 80.
 - **Master cartons:** P01/P02/P04 = 100 u; P03/P05/P06 = 50 u.
@@ -241,7 +241,7 @@ $$
 S_{it}\mid D_i \sim \mathrm{Poisson}(\tau_{it}D_i).
 $$
 
-**Tier 1 — active-day extrapolation.** Over a window $`W`$, the log-likelihood is
+**Tier 1 - active-day extrapolation.** Over a window $`W`$, the log-likelihood is
 
 $$
 \ell(D_i)=\sum_{t\in W}\Big[S_{it}\log(\tau_{it}D_i)-\tau_{it}D_i-\log(S_{it}!)\Big],
@@ -266,7 +266,7 @@ $$
 
 The partial-day branch is a bounded survival proxy: the denominator is prior expected demand plus half a standard deviation, so the weight falls as the stockout arrives earlier in the day and can never exceed one.
 
-**Tier 2 — cross-sectional sister imputation.** When SKU $`i`$ is censored, in-stock siblings in the same parent family reveal the missing traffic. Define the active sibling share and inactive complement
+**Tier 2 - cross-sectional sister imputation.** When SKU $`i`$ is censored, in-stock siblings in the same parent family reveal the missing traffic. Define the active sibling share and inactive complement
 
 $$
 \Omega_A=\sum_{j\in P\setminus\{i\}}\omega_{j\mid P}\,\mathbf{1}[j\text{ active}],
@@ -289,7 +289,7 @@ $$
 \hat D_i^{\text{cs}}=\frac{1}{|C_i|}\sum_{t\in C_i}\hat D_{it}^{\text{cs}}.
 $$
 
-**Fallback ladder — widen the window before you extrapolate.** A fully depleted SKU contributes nothing to $`\hat D_i^{\text{act}}`$: numerator and denominator are both zero, so the rate is undefined rather than zero. The engine widens the exposure window in a fixed order instead of extrapolating from a month with no information:
+**Fallback ladder - widen the window before you extrapolate.** A fully depleted SKU contributes nothing to $`\hat D_i^{\text{act}}`$: numerator and denominator are both zero, so the rate is undefined rather than zero. The engine widens the exposure window in a fixed order instead of extrapolating from a month with no information:
 
 $$
 \hat D_i=
@@ -538,7 +538,7 @@ Inventory policy is only defensible if it is connected to contribution margin. T
 | **Net realized revenue** | **\$40.00** | **\$40.00** | **\$38.00** |
 | FOB factory cost | −\$4.20 | −\$4.20 | −\$4.20 |
 | Ocean freight, duty, 3PL putaway | −\$0.95 | −\$0.95 | −\$0.95 |
-| FBA inbound LTL transfer | −\$0.45 | −\$0.45 | — |
+| FBA inbound LTL transfer | −\$0.45 | −\$0.45 | - |
 | **Gross margin after landed COGS and FBA inbound** | **\$34.40** | **\$34.40** | **\$32.85** |
 | Marketplace referral / payment fee | −\$6.00 (15%) | −\$6.00 (15%) | −\$1.40 (2.9% + \$0.30) |
 | Pick, pack and outbound fulfillment | −\$3.15 (FBA small standard) | −\$3.15 (FBA small standard) | −\$6.20 (3PL pick \$1.65 + postage \$4.55) |
@@ -549,18 +549,18 @@ Inventory policy is only defensible if it is connected to contribution margin. T
 | **Net contribution profit per unit** | **\$19.08** | **\$18.20** | **\$12.79** |
 | **Contribution margin** | **47.7%** | **45.5%** | **33.7%** |
 
-**Assumption ledger — what is a policy constant and what is a benchmark.**
+**Assumption ledger - what is a policy constant and what is a benchmark.**
 
 - **From `src/config.py`:** Amazon referral **15%** (`AMAZON_REFERRAL_RATE`), low-inventory surcharge **\$0.89** at <14 days (`LOW_INVENTORY_FEE_US`), DTC welcome discount **5%** (`DTC_WELCOME_DISCOUNT`), DTC payment fee **2.9% + \$0.30** (`DTC_PAYMENT_FEE_RATE`, `DTC_PAYMENT_FIXED_FEE`). The fee is zero in the healthy state because effective HDoS is at or above 28 days.
 - **From the research dossier, not a config constant:** FBA fulfillment **\$3.15/unit** (small standard, ≤4 oz) and 3PL pick-and-post **\$6.20/unit** (\$1.65 pick + \$4.55 postage). These are the only two fulfillment lines not stored in `src/config.py`; they are held constant across the FBA states so the comparison isolates **platform policy**, not vendor negotiation. The underlying research dossier is kept private and is not part of this repository.
 - **Other dossier benchmarks:** storage/aged \$0.02, \$0.01 and \$0.01; returns 8.8%, 8.8% and 6.2%; acquisition 12% TACoS, 12% TACoS and an \$11.50 CPA. They are explicit assumptions, not audited actuals.
 - **Scope:** per-unit contribution before fixed overhead, depreciation, FX and corporate payroll. P01 is used because it is the highest-volume family; other families have different retail and landed costs and would move the levels, not the ranking. All percentages are of gross MSRP except the DTC margin, which is stated on net realized revenue of \$38.00.
 
-**Reading the result.** One week inside the <14-day band costs **\$0.88 per unit**, or **4.6% of healthy contribution** — which is exactly why this week's transfer exposure is **\$3,442.00**. That is the economic value of the 32-day policy shield. Shopify DTC earns **\$6.29 less per unit** than healthy FBA, but the gap is not caused by fulfillment alone: paid media is **\$6.70 higher** and 3PL postage is **\$3.05 higher**, partly offset by the absence of the 15% referral fee. DTC is therefore a **margin-mix and customer-ownership decision**, while the FBA shield is **cheap insurance against a known, dated penalty**. The engine optimizes the second; the first belongs to the commercial strategy.
+**Reading the result.** One week inside the <14-day band costs **\$0.88 per unit**, or **4.6% of healthy contribution** - which is exactly why this week's transfer exposure is **\$3,442.00**. That is the economic value of the 32-day policy shield. Shopify DTC earns **\$6.29 less per unit** than healthy FBA, but the gap is not caused by fulfillment alone: paid media is **\$6.70 higher** and 3PL postage is **\$3.05 higher**, partly offset by the absence of the 15% referral fee. DTC is therefore a **margin-mix and customer-ownership decision**, while the FBA shield is **cheap insurance against a known, dated penalty**. The engine optimizes the second; the first belongs to the commercial strategy.
 
 ## 7. The Excel sign-off workbook
 
-`outputs/Weekly_Operations_Replenishment_Model.xlsx` contains six tabs, five Excel tables, 21 named policy controls and **8,048 live formulas** (Excel reports 8,070 because four merged ranges inherit their anchor's formula). The Python engine is the single source of truth for policy decisions: unconstrained demand, safety stock, fee shields, ROP/S_max, age-safe carton targets and the container allocation are written as engine outputs. The workbook keeps the arithmetic auditable — units, CBM, fee exposure, alerts, MOQ/DOS checks and every KPI aggregate are live formulas over those decisions.
+`outputs/Weekly_Operations_Replenishment_Model.xlsx` contains six tabs, five Excel tables, 21 named policy controls and **8,048 live formulas** (Excel reports 8,070 because four merged ranges inherit their anchor's formula). The Python engine is the single source of truth for policy decisions: unconstrained demand, safety stock, fee shields, ROP/S_max, age-safe carton targets and the container allocation are written as engine outputs. The workbook keeps the arithmetic auditable - units, CBM, fee exposure, alerts, MOQ/DOS checks and every KPI aggregate are live formulas over those decisions.
 
 | Tab | Purpose | Representative live formulas |
 | :--- | :--- | :--- |
@@ -631,7 +631,7 @@ build_database()   # -> data/processed/control_tower.duckdb
 
 ## 9. Reproducibility and testing
 
-> **Before opening the workbook outside Excel.** The `.xlsx` is saved with `fullCalcOnLoad`, so Excel 365 (desktop) recalculates its 8,048 live formulas on open. Formula cells carry no cached values: Google Sheets, GitHub's file preview, macOS QuickLook or any non-calculating viewer may show blank cells or unresolved `_xlfn.` functions. For a viewer-agnostic read, use `outputs/Weekly_Executive_Briefing.md` and the CSVs/JSON in `data/processed/` — they carry the same KPIs.
+> **Before opening the workbook outside Excel.** The `.xlsx` is saved with `fullCalcOnLoad`, so Excel 365 (desktop) recalculates its 8,048 live formulas on open. Formula cells carry no cached values: Google Sheets, GitHub's file preview, macOS QuickLook or any non-calculating viewer may show blank cells or unresolved `_xlfn.` functions. For a viewer-agnostic read, use `outputs/Weekly_Executive_Briefing.md` and the CSVs/JSON in `data/processed/` - they carry the same KPIs.
 
 - **Seed:** 42 (`config.SEED`); repeated `--generate-data` runs are byte-identical.
 - **Snapshot:** fixed at 2026-10-25 so all artifacts and tests are stable.
@@ -658,7 +658,7 @@ python -m pytest tests/test_excel_workbook.py -q
 
 ## 10. Assumptions and limits
 
-- **Synthetic telemetry, real arithmetic.** The feeds are generated, not an audited company ledger. The value is in the decision logic, constraints and reproducibility — not in claiming a real P&L.
+- **Synthetic telemetry, real arithmetic.** The feeds are generated, not an audited company ledger. The value is in the decision logic, constraints and reproducibility - not in claiming a real P&L.
 - **One 3PL, one factory lane, USD, weekly ocean cadence.** Multi-warehouse, multi-currency and air-freight optimization are out of scope.
 - **Fee schedules are policy inputs.** The 2026 Amazon fee table is centralized in `src/config.py`; verify current published tariffs before production use.
 - **Unit economics are a benchmark, not an audited P&L.** The healthy/penalized/DTC comparison in section 6 combines config policy constants with the research dossier's fulfillment, returns and acquisition-cost assumptions; it excludes fixed overhead, depreciation and FX.
@@ -669,8 +669,8 @@ python -m pytest tests/test_excel_workbook.py -q
 
 ## 11. Documentation
 
-This README is the operating document. The engine specification lives in `src/engine/`, the workbook schema in `src/deliverables/excel_generator.py`, and the policy constants in `src/config.py`. The reasoning behind the choices — and the alternatives that were rejected — is recorded in [`DECISIONS.md`](DECISIONS.md). Static diagram sources and exports are in [`assets/diagrams/`](assets/diagrams/README.md). Internal working notes and the research dossier are kept private and are not part of this repository.
+This README is the operating document. The engine specification lives in `src/engine/`, the workbook schema in `src/deliverables/excel_generator.py`, and the policy constants in `src/config.py`. The reasoning behind the choices - and the alternatives that were rejected - is recorded in [`DECISIONS.md`](DECISIONS.md). Static diagram sources and exports are in [`assets/diagrams/`](assets/diagrams/README.md). Internal working notes and the research dossier are kept private and are not part of this repository.
 
 ---
 
-**Built for operators, not dashboards.** Change a policy cell, recalculate, and the plan moves — with every constraint still visible.
+**Built for operators, not dashboards.** Change a policy cell, recalculate, and the plan moves - with every constraint still visible.

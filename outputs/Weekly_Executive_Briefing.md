@@ -94,12 +94,12 @@ The following FNSKUs should be removed or liquidated **before the 14th at 23:59 
 
 ## 6. Monday action list
 
-1. **08:00** — Refresh the six feeds, run `python main.py --run-all`, and verify the ingestion integrity gate (zero orphan FNSKUs).
-2. **08:30** — Approve Tab 02 exception list; override the unconstrained velocity only where a documented promotion or influencer event explains the residual.
-3. **09:00** — Release the 3PL transfer manifest from Tab 03 to the WMS; every line must show `CARTON OK` and `Post-transfer DOS ≤ 120`.
-4. **10:00** — Transmit the factory PO from Tab 04; confirm the 20' GP allocation and the Tier-A top-up. Escalate any `MOQ OVERRIDE` line to procurement.
-5. **Before the 14th** — Execute removal orders for Tab 05 `EXECUTE REMOVAL` lines and apply the 25% markdown to `DISCOUNT 25% NOW` lines.
-6. **Sign-off** — Record the S&OP decision in Tab 00 and archive the workbook hash with the weekly operations log.
+1. **08:00** - Refresh the six feeds, run `python main.py --run-all`, and verify the ingestion integrity gate (zero orphan FNSKUs).
+2. **08:30** - Approve Tab 02 exception list; override the unconstrained velocity only where a documented promotion or influencer event explains the residual.
+3. **09:00** - Release the 3PL transfer manifest from Tab 03 to the WMS; every line must show `CARTON OK` and `Post-transfer DOS ≤ 120`.
+4. **10:00** - Transmit the factory PO from Tab 04; confirm the 20' GP allocation and the Tier-A top-up. Escalate any `MOQ OVERRIDE` line to procurement.
+5. **Before the 14th** - Execute removal orders for Tab 05 `EXECUTE REMOVAL` lines and apply the 25% markdown to `DISCOUNT 25% NOW` lines.
+6. **Sign-off** - Record the S&OP decision in Tab 00 and archive the workbook hash with the weekly operations log.
 
 ---
 
