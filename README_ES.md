@@ -20,6 +20,22 @@
 - **Resultado:** 11.450 unidades (147 cartones) pasan de 3PL a FBA; el PO de fábrica es de 38.750 unidades (461 cartones, 26,910 CBM); el 20' GP seleccionado carga 28,770 de 28,8 CBM (99,9%) con 41.850 unidades; la exposición a tarifas a 30 días en el peor caso es de 3.442 $.
 - **Advertencia:** cada transacción y saldo es sintético; las tarifas son inputs de política que deben contrastarse con la tarifa vigente de Amazon; el libro requiere Excel 365 para `LET`, `XLOOKUP` y `CEILING.MATH`.
 
+## Contenido
+
+- [1. Línea base ejecutiva](#1-línea-base-ejecutiva)
+- [2. Topología del sistema y flujo de datos](#2-topología-del-sistema-y-flujo-de-datos)
+- [3. Inicio rápido](#3-inicio-rápido)
+- [4. Contrato de datos sintéticos](#4-contrato-de-datos-sintéticos)
+- [5. Especificación matemática](#5-especificación-matemática)
+- [6. Unit economics](#6-unit-economics-fba-sano-vs-fba-penalizado-vs-shopify-dtc)
+- [7. Libro Excel de firma](#7-libro-excel-de-firma)
+- [8. Estructura del repositorio](#8-estructura-del-repositorio)
+- [9. Reproducibilidad y pruebas](#9-reproducibilidad-y-pruebas)
+- [10. Supuestos y límites](#10-supuestos-y-límites)
+- [11. Documentación](#11-documentación)
+- [Licencia](#licencia)
+- [Autor](#autor)
+
 Este repositorio implementa un motor semanal de decisiones S&OP que responde cuatro preguntas operativas con aritmética auditable:
 
 1. **¿Cuál es la demanda real?** Las ventas están censuradas por los quiebres de stock, por lo que las unidades observadas subestiman la demanda. Un estimador consciente de la censura reconstruye la velocidad latente y se puntúa sobre nueve cortes walk-forward.
