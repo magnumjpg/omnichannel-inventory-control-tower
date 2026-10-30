@@ -1,14 +1,14 @@
-# Motor Omnicanal de Asignación de Inventario Multi-Eslabón y Des-censurado de Demanda
+# Torre de Control de Inventario Omnicanal
 
-[![CI](https://github.com/magnumjpg/omnichannel-inventory-control-tower/actions/workflows/tests.yml/badge.svg)](https://github.com/magnumjpg/omnichannel-inventory-control-tower/actions/workflows/tests.yml) [![tests](https://img.shields.io/badge/tests-65%20passed-brightgreen)](#) [![Python](https://img.shields.io/badge/python-3.11-blue)](https://www.python.org/) [![License](https://img.shields.io/badge/license-MIT-green)](LICENSE) [![Datos](https://img.shields.io/badge/datos-cat%C3%A1logo%20sint%C3%A9tico-informational)](#4-contrato-de-datos-sintéticos)
+*Asignación multieslabón y des-censurado de demanda para un ciclo semanal de S&OP.*
 
-**Idioma:** [English](README.md) · [Registro de decisiones](DECISIONS.md) · [Fuentes de diagramas](assets/diagrams/README.md)
+[![CI](https://github.com/magnumjpg/omnichannel-inventory-control-tower/actions/workflows/tests.yml/badge.svg)](https://github.com/magnumjpg/omnichannel-inventory-control-tower/actions/workflows/tests.yml) [![tests](https://img.shields.io/badge/tests-65%20passed-brightgreen)](https://github.com/magnumjpg/omnichannel-inventory-control-tower/actions/workflows/tests.yml) [![Python](https://img.shields.io/badge/python-3.11-blue)](https://www.python.org/) [![License](https://img.shields.io/badge/license-MIT-green)](LICENSE) [![Datos](https://img.shields.io/badge/datos-cat%C3%A1logo%20sint%C3%A9tico-informational)](#4-contrato-de-datos-sintéticos)
 
-**Un motor semanal de S&OP que decide cuál es la demanda real, dónde debe estar el stock y qué envía la fábrica - con cada restricción auditable.**
+**Español** · [English](README.md) · [Registro de decisiones](DECISIONS.md) · [Fuentes de diagramas](assets/diagrams/README.md)
+
+**Un motor semanal de S&OP que decide cuál es la demanda real, dónde debe estar el stock y qué envía la fábrica, con cada restricción auditable.**
 
 *Catálogo sintético de 160 SKU · snapshot 2026-10-25 · semilla 42 · USD · un ciclo oceánico semanal en 20' GP · 65 tests*
-
-> **Memorando Ejecutivo**: Motor integral de Sales & Operations Planning (S&OP) y asignación de inventario multieslabón. Modela la velocidad de demanda real bajo censura por rotura de stock, optimiza transferencias del 3PL a Amazon FBA contra penalizaciones por bajo inventario y computa pedidos de compra optimizados para transporte marítimo en contenedor.
 
 ---
 
@@ -29,7 +29,7 @@ Este repositorio implementa un motor semanal de decisiones S&OP que responde cua
 
 La salida es un **libro Excel 365 de seis pestañas gobernado por el motor, con aritmética viva**, un briefing ejecutivo en Markdown, artefactos CSV/JSON procesados y una **suite de 65 tests de pytest** que fija la matemática y la estructura del libro.
 
-El catálogo sintético modela una marca ficticia de organización de viaje, **Northbound Supply Co.** - packing cubes, bolsas de compresión, neceseres, organizadores tecnológicos, bolsas para calzado y bolsas de lavandería  - , de modo que cada cifra es reproducible sin depender de los datos de producto de una empresa real.
+El catálogo sintético modela una marca ficticia de organización de viaje, **Northbound Supply Co.**: packing cubes, bolsas de compresión, neceseres, organizadores tecnológicos, bolsas para calzado y bolsas de lavandería. Cada cifra es reproducible sin depender de los datos de producto de una empresa real.
 
 ## 1. Línea base ejecutiva
 
@@ -220,7 +220,7 @@ El generador produce un esquema relacional coherente. Cada feed es determinista 
 - **Historia:** 365 días; snapshot **2026-10-25**.
 - **Catálogo:** 160 FNSKU hijos en 6 familias padre: P01 Aero Packing Cubes (36), P02 Vault Compression Bags (36), P03 Transit Toiletry Kits (36), P04 Grid Tech Organizers (24), P05 Cabin Shoe Bags (16), P06 Mesh Laundry Bags (12).
 - **Matriz 4-D:** tamaños S/M/L en P01–P03 con **12% / 52% / 36%**; Compact/Large en P04 (60/40); Standard/Large en P05 (65/35); S/M/L en P06 (25/45/30). Seis colores con **38% / 24% / 14% / 11% / 8% / 5%** en P01–P04 y cuatro en P05–P06. Herraje: zip estándar 68% / zip resistente al agua 32% (P01–P04), cordón 68% / zip 32% (P05), cordón 100% (P06).
-- **Nota sobre el mix realizado:** los tiers ABC-XYZ se asignan por ranking de participación estacionaria ponderada por familia, no re-normalizando los pesos de diseño. Por eso el mix realizado se desvía de la matriz de diseño - en las tres familias hero de packing, la talla S es **6,3%** del volumen frente al 12% diseñado, Black es **46,5%** frente al 38% y Terracotta es **1,4%** frente al 5% - mientras el invariante de Pareto (top 30 SKU = **73,5%**) se cumple exactamente. Es una decisión de modelado deliberada: la asignación por tiers es la que produce el sesgo de Pareto que el motor debe gestionar, así que el catálogo no se re-estratifica ni se regeneran KPI para alinear cosméticamente el mix.
+- **Nota sobre el mix realizado:** los tiers ABC-XYZ se asignan por ranking de participación estacionaria ponderada por familia, no re-normalizando los pesos de diseño. Por eso el mix realizado se desvía de la matriz de diseño: en las tres familias hero de packing, la talla S es **6,3%** del volumen frente al 12% diseñado, Black es **46,5%** frente al 38% y Terracotta es **1,4%** frente al 5%, mientras el invariante de Pareto (top 30 SKU = **73,5%**) se cumple exactamente. Es una decisión de modelado deliberada: la asignación por tiers es la que produce el sesgo de Pareto que el motor debe gestionar, así que el catálogo no se re-estratifica ni se regeneran KPI para alinear cosméticamente el mix.
 - **Pareto:** el 18,8% superior de SKU (30) genera **73,5%** del volumen; el CV de AX/AY se mantiene en el sobre 0,22–0,45 con 14–48 unidades/día.
 - **Tiers:** AX 18 · AY 12 · BX 30 · BY 20 · CZ 80.
 - **Cartones maestros:** P01/P02/P04 = 100 u; P03/P05/P06 = 50 u.
@@ -241,7 +241,7 @@ $$
 S_{it}\mid D_i \sim \mathrm{Poisson}(\tau_{it}D_i).
 $$
 
-**Nivel 1 - extrapolación por días activos.** Sobre una ventana $`W`$, la log-verosimilitud es
+**Nivel 1: extrapolación por días activos.** Sobre una ventana $`W`$, la log-verosimilitud es
 
 $$
 \ell(D_i)=\sum_{t\in W}\Big[S_{it}\log(\tau_{it}D_i)-\tau_{it}D_i-\log(S_{it}!)\Big],
@@ -266,7 +266,7 @@ $$
 
 La rama de quiebre parcial es un proxy acotado de supervivencia: el denominador es la demanda esperada previa más media desviación estándar, de modo que el peso cae cuanto más temprano ocurre el quiebre y nunca supera uno.
 
-**Nivel 2 - imputación transversal entre hermanos.** Cuando el SKU $`i`$ está censurado, los hermanos con stock de la misma familia padre revelan el tráfico faltante. Defina la participación activa de hermanos y su complemento inactivo
+**Nivel 2: imputación transversal entre hermanos.** Cuando el SKU $`i`$ está censurado, los hermanos con stock de la misma familia padre revelan el tráfico faltante. Defina la participación activa de hermanos y su complemento inactivo
 
 $$
 \Omega_A=\sum_{j\in P\setminus\{i\}}\omega_{j\mid P}\,\mathbf{1}[j\text{ activo}],
@@ -289,7 +289,7 @@ $$
 \hat D_i^{\text{cs}}=\frac{1}{|C_i|}\sum_{t\in C_i}\hat D_{it}^{\text{cs}}.
 $$
 
-**Escalera de fallback - ensancha la ventana antes de extrapolar.** Un SKU totalmente agotado no aporta nada a $`\hat D_i^{\text{act}}`$: numerador y denominador son cero, así que la tasa está indefinida, no es cero. El motor ensancha la ventana de exposición en un orden fijo en lugar de extrapolar desde un mes sin información:
+**Escalera de fallback: ensancha la ventana antes de extrapolar.** Un SKU totalmente agotado no aporta nada a $`\hat D_i^{\text{act}}`$: numerador y denominador son cero, así que la tasa está indefinida, no es cero. El motor ensancha la ventana de exposición en un orden fijo en lugar de extrapolar desde un mes sin información:
 
 $$
 \hat D_i=
@@ -549,7 +549,7 @@ La política de inventario solo es defendible si está conectada con el margen d
 | **Beneficio de contribución neto por unidad** | **\$19,08** | **\$18,20** | **\$12,79** |
 | **Margen de contribución** | **47,7%** | **45,5%** | **33,7%** |
 
-**Registro de supuestos - qué es constante de política y qué es benchmark.**
+**Registro de supuestos: qué es constante de política y qué es benchmark.**
 
 - **De `src/config.py`:** referral de Amazon **15%** (`AMAZON_REFERRAL_RATE`), recargo de bajo inventario **\$0,89** a <14 días (`LOW_INVENTORY_FEE_US`), descuento de bienvenida DTC **5%** (`DTC_WELCOME_DISCOUNT`), comisión de pago DTC **2,9% + \$0,30** (`DTC_PAYMENT_FEE_RATE`, `DTC_PAYMENT_FIXED_FEE`). La tarifa es cero en el estado sano porque el HDoS efectivo está en o por encima de 28 días.
 - **Del dossier de investigación, no de una constante de config:** fulfillment FBA **\$3,15/unidad** (small standard, ≤4 oz) y pick-and-post 3PL **\$6,20/unidad** (\$1,65 pick + \$4,55 franqueo). Son las dos únicas líneas de fulfillment que no están en `src/config.py`; se mantienen constantes entre los estados FBA para que la comparación aísle la **política de plataforma**, no la negociación con proveedores. El dossier de investigación subyacente se mantiene privado y no forma parte de este repositorio.
@@ -631,7 +631,7 @@ build_database()   # -> data/processed/control_tower.duckdb
 
 ## 9. Reproducibilidad y pruebas
 
-> **Antes de abrir el libro fuera de Excel.** El `.xlsx` se guarda con `fullCalcOnLoad`, así que Excel 365 (escritorio) recalcula sus 8.048 fórmulas vivas al abrirlo. Las celdas de fórmula no llevan valores cacheados: Google Sheets, la vista previa de GitHub, QuickLook de macOS o cualquier visor que no calcule pueden mostrar celdas vacías o funciones `_xlfn.` sin resolver. Para una lectura independiente del visor, use `outputs/Weekly_Executive_Briefing.md` y los CSV/JSON de `data/processed/` - llevan los mismos KPI.
+> **Antes de abrir el libro fuera de Excel.** El `.xlsx` se guarda con `fullCalcOnLoad`, así que Excel 365 (escritorio) recalcula sus 8.048 fórmulas vivas al abrirlo. Las celdas de fórmula no llevan valores cacheados: Google Sheets, la vista previa de GitHub, QuickLook de macOS o cualquier visor que no calcule pueden mostrar celdas vacías o funciones `_xlfn.` sin resolver. Para una lectura independiente del visor, use `outputs/Weekly_Executive_Briefing.md` y los CSV/JSON de `data/processed/`; llevan los mismos KPI.
 
 - **Semilla:** 42 (`config.SEED`); corridas repetidas de `--generate-data` son idénticas byte a byte.
 - **Snapshot:** fijo en 2026-10-25 para que todos los artefactos y tests sean estables.
@@ -669,7 +669,15 @@ python -m pytest tests/test_excel_workbook.py -q
 
 ## 11. Documentación
 
-Este README es el documento operativo. La especificación del motor vive en `src/engine/`, el esquema del libro en `src/deliverables/excel_generator.py` y las constantes de política en `src/config.py`. El razonamiento detrás de las decisiones  - y las alternativas descartadas -  está en [`DECISIONS.md`](DECISIONS.md). Las fuentes y exportes estáticos de los diagramas están en [`assets/diagrams/`](assets/diagrams/README.md). Las notas internas de trabajo y el dossier de investigación se mantienen privados y no forman parte de este repositorio.
+Este README es el documento operativo. La especificación del motor vive en `src/engine/`, el esquema del libro en `src/deliverables/excel_generator.py` y las constantes de política en `src/config.py`. El razonamiento detrás de las decisiones (y las alternativas descartadas) está en [`DECISIONS.md`](DECISIONS.md). Las fuentes y exportes estáticos de los diagramas están en [`assets/diagrams/`](assets/diagrams/README.md). Las notas internas de trabajo y el dossier de investigación se mantienen privados y no forman parte de este repositorio.
+
+## Licencia
+
+MIT. Ver [LICENSE](LICENSE).
+
+## Autor
+
+Jaime Pérez Gómez. [GitHub](https://github.com/magnumjpg) · [LinkedIn](https://www.linkedin.com/in/jaime-p%C3%A9rez-656919237/) · [jaimeperezgms@gmail.com](mailto:jaimeperezgms@gmail.com)
 
 ---
 
